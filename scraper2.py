@@ -16,7 +16,7 @@ def get_table(driver : webdriver.Chrome) -> pd.DataFrame:
 
         cols = [
         "unidades_desligadas",
-        "compra_media,"
+        "compra_media",
         "emprestimo_total",
         "emprestimo_medio",
         "desconto_total",
@@ -24,16 +24,13 @@ def get_table(driver : webdriver.Chrome) -> pd.DataFrame:
         "renda_media",
         "taxa_de_juros_media"
         ]
-
+ 
         df = pd.DataFrame([], index=["G1", "G2", "G3"], columns=cols, dtype=float)
 
-        xpath = "//*[@id=\"pvExplorationHost\"]/div/div/exploration/div/explore-canvas/div/div[2]/div/div[2]/div[2]/visual-container-repeat/visual-container[8]/transform/div/div[2]/div/visual-modern/div/div/div[2]/div/div[2]/div/div[1]/div/div/div[1]/div"
+        xpath = '//*[@id="pvExplorationHost"]/div/div/exploration/div/explore-canvas/div/div[2]/div/div[2]/div[2]/visual-container-repeat/visual-container[3]/transform/div/div[2]/div/visual-modern/div/div/div[2]/div[1]/div[3]/div'
         index_col = WebDriverWait(driver, WAI_TIMES).until(
             EC.presence_of_element_located((By.XPATH, xpath))
         )
-
-        xpath = '//*[@id="pvExplorationHost"]/div/div/exploration/div/explore-canvas/div/div[2]/div/div[2]/div[2]/visual-container-repeat/visual-container[3]/transform/div/div[2]/div/visual-modern/div/div/div[2]/div[1]/div[3]/div'
-        index_col = driver.find_element(By.XPATH, xpath)
 
         xpath = '//*[@id="pvExplorationHost"]/div/div/exploration/div/explore-canvas/div/div[2]/div/div[2]/div[2]/visual-container-repeat/visual-container[3]/transform/div/div[2]/div/visual-modern/div/div/div[2]/div[1]/div[3]/div/*'
         indexes = index_col.find_elements(By.XPATH, xpath)
@@ -45,7 +42,7 @@ def get_table(driver : webdriver.Chrome) -> pd.DataFrame:
     
         for i in range(1, 9):
 
-            xpath = f'//*[@id="pvExplorationHost"]/div/div/exploration/div/explore-canvas/div/div[2]/div/div[2]/div[2]/visual-container-repeat/visual-container[3]/transform/div/div[2]/div/visual-modern/div/div/div[2]/div[1]/div[4]/div/div/div[{i}]'
+            xpath = f'//*[@id="pvExplorationHost"]/div/div/exploration/div/explore-canvas/div/div[2]/div/div[2]/div[2]/visual-container-repeat/visual-container[3]/transform/div/div[2]/div/visual-modern/div/div/div[2]/div[1]/div[4]/div/div/div[f{i}]'
             column = driver.find_element(By.XPATH, xpath)
             cells = column.find_elements(By.CLASS_NAME, "pivotTableCellWrap")
 
@@ -62,7 +59,7 @@ def get_table(driver : webdriver.Chrome) -> pd.DataFrame:
 
         cols = [
         "unidades_desligadas",
-        "compra_media,"
+        "compra_media",
         "emprestimo_total",
         "emprestimo_medio",
         "desconto_total",
