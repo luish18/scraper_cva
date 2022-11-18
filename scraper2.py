@@ -16,11 +16,11 @@ def get_table(driver : webdriver.Chrome) -> pd.DataFrame:
 
         cols = [
         "unidades_desligadas",
+        "compra_media,"
         "emprestimo_total",
         "emprestimo_medio",
         "desconto_total",
         "desconto_medio",
-        "compra_media",
         "renda_media",
         "taxa_de_juros_media"
         ]
@@ -62,11 +62,11 @@ def get_table(driver : webdriver.Chrome) -> pd.DataFrame:
 
         cols = [
         "unidades_desligadas",
+        "compra_media,"
         "emprestimo_total",
         "emprestimo_medio",
         "desconto_total",
         "desconto_medio",
-        "compra_media",
         "renda_media",
         "taxa_de_juros_media"
         ]
@@ -131,11 +131,11 @@ if __name__ == "__main__":
         "municipio",
         "grupo",
         "unidades_desligadas",
+        "compra_media",
         "emprestimo_total",
         "emprestimo_medio",
         "desconto_total",
         "desconto_medio",
-        "compra_media",
         "renda_media",
         "taxa_de_juros_media"
     ]
