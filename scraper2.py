@@ -8,22 +8,23 @@ from time import sleep
 import pandas as pd
 from os.path import exists
 
+
 def get_table(driver : webdriver.Chrome) -> pd.DataFrame:
 
 
+    cols = [
+    "unidades_desligadas",
+    "compra_media",
+    "emprestimo_total",
+    "emprestimo_medio",
+    "desconto_total",
+    "desconto_medio",
+    "renda_media",
+    "taxa_de_juros_media"
+    ]
 
     try:
 
-        cols = [
-        "unidades_desligadas",
-        "compra_media",
-        "emprestimo_total",
-        "emprestimo_medio",
-        "desconto_total",
-        "desconto_medio",
-        "renda_media",
-        "taxa_de_juros_media"
-        ]
  
         df = pd.DataFrame([], index=["G1", "G2", "G3"], columns=cols, dtype=float)
 
@@ -37,18 +38,19 @@ def get_table(driver : webdriver.Chrome) -> pd.DataFrame:
 
 
 
-        index_names = [id.find_element(By.XPATH, f'//*[@id="pvExplorationHost"]/div/div/exploration/div/explore-canvas/div/div[2]/div/div[2]/div[2]/visual-container-repeat/visual-container[3]/transform/div/div[2]/div/visual-modern/div/div/div[2]/div[1]/div[3]/div/div[{i + 1}]/div').accessible_name for i, id in enumerate(indexes)]
+        index_names = [id.find_element(By.XPATH, f'//*[@id="pvExplorationHost"]/div/div/exploration/div/explore-canvas/div/div[2]/div/div[2]/div[2]/visual-container-repeat/visual-container[3]/transform/div/div[2]/div/visual-modern/div/div/div[2]/div[1]/div[3]/div/div[{i}]/div').accessible_name for i, id in enumerate(indexes, start=1)]
 
     
         for i in range(1, 9):
 
-            xpath = f'//*[@id="pvExplorationHost"]/div/div/exploration/div/explore-canvas/div/div[2]/div/div[2]/div[2]/visual-container-repeat/visual-container[3]/transform/div/div[2]/div/visual-modern/div/div/div[2]/div[1]/div[4]/div/div/div[f{i}]'
-            column = driver.find_element(By.XPATH, xpath)
-            cells = column.find_elements(By.CLASS_NAME, "pivotTableCellWrap")
+
+            xpath = f'//*[@id="pvExplorationHost"]/div/div/exploration/div/explore-canvas/div/div[2]/div/div[2]/div[2]/visual-container-repeat/visual-container[3]/transform/div/div[2]/div/visual-modern/div/div/div[2]/div[1]/div[4]/div/div/div[{i}]/*'
+            cells = driver.find_elements(By.XPATH, xpath)
 
             for j, cell in enumerate(cells):
 
                 try:
+                    print(cell.accessible_name)
                     df.at[index_names[j], cols[i - 1]] = float(cell.accessible_name.replace("R$", "").replace(",", "").strip())
                 except ValueError:
                     print("Unable to convert 1 value")
@@ -57,17 +59,7 @@ def get_table(driver : webdriver.Chrome) -> pd.DataFrame:
         return df
     except NoSuchElementException:
 
-        cols = [
-        "unidades_desligadas",
-        "compra_media",
-        "emprestimo_total",
-        "emprestimo_medio",
-        "desconto_total",
-        "desconto_medio",
-        "renda_media",
-        "taxa_de_juros_media"
-        ]
-
+        print("No such element")
         df = pd.DataFrame([], index=["G1", "G2", "G3"], columns=cols, dtype=float)
 
         return df
@@ -168,6 +160,7 @@ if __name__ == "__main__":
                     # coleta dados e salva em csv
                     print(f"Getting data for {name}")
                     data = get_table(driver)
+                    print(data)
                     data.reset_index(inplace=True)
                     data.rename(columns={"index" : "grupo"}, inplace=True)
                     data["ano"] = str(ano)
