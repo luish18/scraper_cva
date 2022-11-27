@@ -1,8 +1,8 @@
 import requests
 from tqdm import tqdm
 
-def build_payload (mun : str, uf : str, ano : str) -> dict:
-    
+def build_payload(mun: str, uf: str, ano: str) -> dict:
+
     base_payload = {
         "version": "1.0.0",
         "queries": [
@@ -168,87 +168,91 @@ def build_payload (mun : str, uf : str, ano : str) -> dict:
         "modelId": 1365069
     }
 
-    base_payload["queries"][0]["Query"]["Commands"][0]["SemanticQueryDataShapeCommand"]["Query"]["Where"][2]["Condition"]["In"]["Values"][0][0]["Literal"]["Value"] = f"'{mun}'"
+    base_payload["queries"][0]["Query"]["Commands"][0]["SemanticQueryDataShapeCommand"][
+        "Query"]["Where"][2]["Condition"]["In"]["Values"][0][0]["Literal"]["Value"] = f"'{mun}'"
 
-    base_payload["queries"][0]["Query"]["Commands"][0]["SemanticQueryDataShapeCommand"]["Query"]["Where"][3]["Condition"]["In"]["Values"][0][0]["Literal"]["Value"] = f"'{uf}'"
+    base_payload["queries"][0]["Query"]["Commands"][0]["SemanticQueryDataShapeCommand"][
+        "Query"]["Where"][3]["Condition"]["In"]["Values"][0][0]["Literal"]["Value"] = f"'{uf}'"
 
-    base_payload["queries"][0]["Query"]["Commands"][0]["SemanticQueryDataShapeCommand"]["Query"]["Where"][4]["Condition"]["In"]["Values"][0][0]["Literal"]["Value"] = f"{ano}L"
+    base_payload["queries"][0]["Query"]["Commands"][0]["SemanticQueryDataShapeCommand"][
+        "Query"]["Where"][4]["Condition"]["In"]["Values"][0][0]["Literal"]["Value"] = f"{ano}L"
 
-    return  base_payload
+    return base_payload
 
-def get_muns (resp, n_muns : int) -> list:
-    
+
+def get_muns(resp, n_muns: int) -> list:
+
     muns = resp["results"][0]["result"]["data"]["dsr"]["DS"][0]["PH"][0]["DM0"]
 
     muns_list = []
 
     for i in range(n_muns):
-        
+
         muns_list.append(muns[i]["G0"])
 
-    
     return muns_list
 
-def gen_mun_list (start_mun : str, end_mun : str = "") -> list:
+
+def gen_mun_list(start_mun: str) -> dict:
 
     url = "https://wabi-brazil-south-b-primary-api.analysis.windows.net/public/reports/querydata"
 
-    querystring = {"synchronous":"true"}
+    querystring = {"synchronous": "true"}
 
     base_payload = {
         "version": "1.0.0",
         "queries": [
             {
                 "Query": {"Commands": [{"SemanticQueryDataShapeCommand": {
-                                "Query": {
-                                    "Version": 2,
-                                    "From": [
+                    "Query": {
+                        "Version": 2,
+                        "From": [
                                         {
                                             "Name": "b",
                                             "Entity": "Base CVA",
                                             "Type": 0
                                         }
-                                    ],
-                                    "Select": [
-                                        {
-                                            "Column": {
-                                                "Expression": {"SourceRef": {"Source": "b"}},
-                                                "Property": "ds_municipio"
-                                            },
-                                            "Name": "Base CVA.ds_municipio"
-                                        }
-                                    ],
-                                    "Where": [{"Condition": {"In": {
-                                                    "Expressions": [{"Column": {
-                                                                "Expression": {"SourceRef": {"Source": "b"}},
-                                                                "Property": "num_ano_orcamento"
-                                                            }}],
-                                                    "Values": [[{"Literal": {"Value": "2022L"}}]]
-                                                }}}, {"Condition": {"Not": {"Expression": {"In": {
-                                                            "Expressions": [{"Column": {
-                                                                        "Expression": {"SourceRef": {"Source": "b"}},
-                                                                        "Property": "faixaRenda_"
-                                                                    }}],
-                                                            "Values": [[{"Literal": {"Value": "null"}}]]
-                                                        }}}}}, {"Condition": {"In": {
-                                                    "Expressions": [{"Column": {
-                                                                "Expression": {"SourceRef": {"Source": "b"}},
-                                                                "Property": "tp_orcamento"
-                                                            }}],
-                                                    "Values": [[{"Literal": {"Value": "'Apoio a Producao'"}}], [{"Literal": {"Value": "'Carta de Credito - Individual'"}}]]
-                                                }}}]
+                                        ],
+                        "Select": [
+                            {
+                                "Column": {
+                                    "Expression": {"SourceRef": {"Source": "b"}},
+                                    "Property": "ds_municipio"
                                 },
-                                "Binding": {
-                                    "Primary": {"Groupings": [{"Projections": [0]}]},
-                                    "DataReduction": {
-                                        "DataVolume": 6,
-                                        "Primary": {"Window": {"RestartTokens": [[""]]}}
-                                    },
-                                    "IncludeEmptyGroups": True,
-                                    "Version": 1
-                                },
-                                "ExecutionMetricsKind": 1
-                            }}]},
+                                "Name": "Base CVA.ds_municipio"
+                            }
+                        ],
+                        "Where": [{"Condition": {"In": {
+                            "Expressions": [{"Column": {
+                                "Expression": {"SourceRef": {"Source": "b"}},
+                                "Property": "num_ano_orcamento"
+                            }}],
+                            "Values": [[{"Literal": {"Value": "2022L"}}]]
+                        }}}, {"Condition": {"Not": {"Expression": {"In": {
+                            "Expressions": [{"Column": {
+                                "Expression": {"SourceRef": {"Source": "b"}},
+                                "Property": "faixaRenda_"
+                            }}],
+                            "Values": [[{"Literal": {"Value": "null"}}]]
+                        }}}}}, {"Condition": {"In": {
+                            "Expressions": [{"Column": {
+                                "Expression": {"SourceRef": {"Source": "b"}},
+                                "Property": "tp_orcamento"
+                            }}],
+                            "Values": [[{"Literal": {"Value": "'Apoio a Producao'"}}], [{"Literal": {"Value": "'Carta de Credito - Individual'"}}]]
+                        }}}]
+                    },
+                    "Binding": {
+                        "Primary": {"Groupings": [{"Projections": [0]}]},
+                        "DataReduction": {
+                            "DataVolume": 6,
+                            "Primary": {"Window": {"RestartTokens": [[""]]}}
+                        },
+                        "IncludeEmptyGroups": True,
+                        "Version": 1
+                    },
+                    "ExecutionMetricsKind": 1
+                }}]},
                 "QueryId": ""
             }
         ],
@@ -275,9 +279,11 @@ def gen_mun_list (start_mun : str, end_mun : str = "") -> list:
     }
 
     mun = start_mun
-    base_payload["queries"][0]["Query"]["Commands"][0]["SemanticQueryDataShapeCommand"]["Binding"]["DataReduction"]["Primary"]["Window"]["RestartTokens"][0][0] = f"'{mun}'"
+    base_payload["queries"][0]["Query"]["Commands"][0]["SemanticQueryDataShapeCommand"][
+        "Binding"]["DataReduction"]["Primary"]["Window"]["RestartTokens"][0][0] = f"'{mun}'"
 
-    response = requests.request("POST", url, json=base_payload, headers=headers, params=querystring).json()
+    response = requests.request(
+        "POST", url, json=base_payload, headers=headers, params=querystring).json()
 
     mun_list = []
 
@@ -285,22 +291,232 @@ def gen_mun_list (start_mun : str, end_mun : str = "") -> list:
 
     while metrics >= 4:
 
-        new_muns = get_muns(response, metrics -2)
+        new_muns = get_muns(response, metrics - 2)
         for n in new_muns:
             mun_list.append(n)
 
         mun = mun_list[-1]
 
-        base_payload["queries"][0]["Query"]["Commands"][0]["SemanticQueryDataShapeCommand"]["Binding"]["DataReduction"]["Primary"]["Window"]["RestartTokens"][0][0] = f"'{mun}'"
+        base_payload["queries"][0]["Query"]["Commands"][0]["SemanticQueryDataShapeCommand"][
+            "Binding"]["DataReduction"]["Primary"]["Window"]["RestartTokens"][0][0] = f"'{mun}'"
 
-        response = requests.request("POST", url, json=base_payload, headers=headers, params=querystring).json()
+        response = requests.request(
+            "POST", url, json=base_payload, headers=headers, params=querystring).json()
 
         metrics = response["results"][0]["result"]["data"]["metrics"]["Events"][1]["Metrics"]["RowCount"]
 
-        print(metrics, mun)
+    mun_dict = {}
 
+    uf_payload = {
+        "version": "1.0.0",
+        "queries": [
+            {
+                "Query": {
+                    "Commands": [
+                        {
+                            "SemanticQueryDataShapeCommand": {
+                                "Query": {
+                                    "Version": 2,
+                                    "From": [
+                                        {
+                                            "Name": "b",
+                                            "Entity": "Base CVA",
+                                            "Type": 0
+                                        }
+                                    ],
+                                    "Select": [
+                                        {
+                                            "Column": {
+                                                "Expression": {
+                                                    "SourceRef": {
+                                                        "Source": "b"
+                                                    }
+                                                },
+                                                "Property": "txt_sigla_uf"
+                                            },
+                                            "Name": "Base CVA.txt_sigla_uf"
+                                        }
+                                    ],
+                                    "Where": [
+                                        {
+                                            "Condition": {
+                                                "In": {
+                                                    "Expressions": [
+                                                        {
+                                                            "Column": {
+                                                                "Expression": {
+                                                                    "SourceRef": {
+                                                                        "Source": "b"
+                                                                    }
+                                                                },
+                                                                "Property": "ds_municipio"
+                                                            }
+                                                        }
+                                                    ],
+                                                    "Values": [
+                                                        [
+                                                            {
+                                                                "Literal": {
+                                                                    "Value": "'Indianópolis'"
+                                                                }
+                                                            }
+                                                        ]
+                                                    ]
+                                                }
+                                            }
+                                        },
+                                        {
+                                            "Condition": {
+                                                "In": {
+                                                    "Expressions": [
+                                                        {
+                                                            "Column": {
+                                                                "Expression": {
+                                                                    "SourceRef": {
+                                                                        "Source": "b"
+                                                                    }
+                                                                },
+                                                                "Property": "num_ano_orcamento"
+                                                            }
+                                                        }
+                                                    ],
+                                                    "Values": [
+                                                        [
+                                                            {
+                                                                "Literal": {
+                                                                    "Value": "2022L"
+                                                                }
+                                                            }
+                                                        ]
+                                                    ]
+                                                }
+                                            }
+                                        },
+                                        {
+                                            "Condition": {
+                                                "Not": {
+                                                    "Expression": {
+                                                        "In": {
+                                                            "Expressions": [
+                                                                {
+                                                                    "Column": {
+                                                                        "Expression": {
+                                                                            "SourceRef": {
+                                                                                "Source": "b"
+                                                                            }
+                                                                        },
+                                                                        "Property": "faixaRenda_"
+                                                                    }
+                                                                }
+                                                            ],
+                                                            "Values": [
+                                                                [
+                                                                    {
+                                                                        "Literal": {
+                                                                            "Value": "null"
+                                                                        }
+                                                                    }
+                                                                ]
+                                                            ]
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        },
+                                        {
+                                            "Condition": {
+                                                "In": {
+                                                    "Expressions": [
+                                                        {
+                                                            "Column": {
+                                                                "Expression": {
+                                                                    "SourceRef": {
+                                                                        "Source": "b"
+                                                                    }
+                                                                },
+                                                                "Property": "tp_orcamento"
+                                                            }
+                                                        }
+                                                    ],
+                                                    "Values": [
+                                                        [
+                                                            {
+                                                                "Literal": {
+                                                                    "Value": "'Apoio a Producao'"
+                                                                }
+                                                            }
+                                                        ],
+                                                        [
+                                                            {
+                                                                "Literal": {
+                                                                    "Value": "'Carta de Credito - Individual'"
+                                                                }
+                                                            }
+                                                        ]
+                                                    ]
+                                                }
+                                            }
+                                        }
+                                    ]
+                                },
+                                "Binding": {
+                                    "Primary": {
+                                        "Groupings": [
+                                            {
+                                                "Projections": [
+                                                    0
+                                                ]
+                                            }
+                                        ]
+                                    },
+                                    "DataReduction": {
+                                        "DataVolume": 3,
+                                        "Primary": {
+                                            "Window": {}
+                                        }
+                                    },
+                                    "IncludeEmptyGroups": True,
+                                    "Version": 1
+                                },
+                                "ExecutionMetricsKind": 1
+                            }
+                        }
+                    ]
+                },
+                "QueryId": "",
+                "ApplicationContext": {
+                    "DatasetId": "4997e9fa-2be4-4230-b8a2-e9946b52d813",
+                    "Sources": [
+                        {
+                            "ReportId": "007599ed-2c6d-43ed-bcf1-8f61ff6c51e0",
+                            "VisualId": "a164ac500426e0d94cb0"
+                        }
+                    ]
+                }
+            }
+        ],
+        "cancelQueries": [],
+        "modelId": 1365069
+    }
 
-    return mun_list
+    print("Getting ufs for each mun")
+    for mun in tqdm(mun_list):
+
+        uf_payload["queries"][0]["Query"]["Commands"][0]["SemanticQueryDataShapeCommand"][
+            "Query"]["Where"][0]["Condition"]["In"]["Values"][0][0]["Literal"]["Value"] = f"'{mun}'"
+        response = requests.request(
+            "POST", url, json=uf_payload, headers=headers, params=querystring).json()
+
+        try:
+
+            mun_dict[mun] = [uf["G0"] for uf in response["results"][0]["result"]["data"]["dsr"]["DS"][0]["PH"][0]["DM0"]]
+        
+        except KeyError:
+
+            print(f"{mun} não contem dados")
+            mun_dict[mun] = None
+
+    return mun_dict
 
 
 if __name__ == "__main__":
@@ -329,6 +545,3 @@ if __name__ == "__main__":
     }
 
     print(gen_mun_list("Abadia de Goiás"))
-
-
-
